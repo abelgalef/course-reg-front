@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { PrivateRoute, PublicRoute } from "./components/protectedRoutes";
+import Admin from "./pages/admin";
+import Welcome from "./pages/welcome";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={<PublicRoute comp={<Welcome />} redirect="admin" />}
+        />
+        <Route
+          path="dashboard"
+          element={
+            <PrivateRoute
+              comp={
+                <h1>
+                  Dash
+                  <br />
+                  <Link to="/admin">admin</Link>
+                </h1>
+              }
+              redirect="/admin"
+            />
+          }
+        />
+        <Route
+          path="admin"
+          element={<PrivateRoute comp={<Admin />} redirect="/" />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
