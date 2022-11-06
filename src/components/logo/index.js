@@ -12,6 +12,7 @@ function DECLogo({s}) {
         <Typography
           variant="h6"
           sx={s}
+          style={{float:"right"}}
         >
           <b>Defense Engineering College</b>
           <Typography variant="subtitle2">A Center of exellence</Typography>

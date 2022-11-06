@@ -1,32 +1,31 @@
 import {
   Grid,
-  Box,
+  Alert,
   TextField,
   Button,
   Typography,
   Link as L,
-  Backdrop,
-  CircularProgress
 } from "@mui/material";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { login } from "../../redux/auth";
 
 function Login() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const [email, setEmail] = React.useState("")
-  const [pass, setPass] = React.useState("")
+  const { loginError } = useSelector((state) => state.auth);
+
+  const [email, setEmail] = React.useState("");
+  const [pass, setPass] = React.useState("");
 
   const onFormSubmit = (e) => {
-    e.preventDefault()
-    dispatch(login({email,pass}))
-  }
+    e.preventDefault();
+    dispatch(login({ email, pass }));
+  };
 
   return (
     <form onSubmit={onFormSubmit}>
-        
       <Grid container spacing={2}>
         <Grid style={{ textAlign: "center" }} item xs={12}>
           <Typography variant="h6">
@@ -42,7 +41,7 @@ function Login() {
             id="filled-basic"
             type="email"
             label="Email"
-            variant="filled"
+            variant="outlined"
             value={email}
             required
             onChange={(e) => {
@@ -56,7 +55,7 @@ function Login() {
             id="filled-basic"
             type="password"
             label="Password"
-            variant="filled"
+            variant="outlined"
             value={pass}
             required
             onChange={(e) => {
@@ -64,6 +63,11 @@ function Login() {
             }}
           />
         </Grid>
+        {loginError ? (
+          <Grid item xs={12}>
+            <Alert severity="error">Invalid Credentials</Alert>
+          </Grid>
+        ) : null}
         <Grid item xs={12} mt={2}>
           <Button
             disableElevation

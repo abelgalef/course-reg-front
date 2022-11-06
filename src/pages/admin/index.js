@@ -13,12 +13,31 @@ import {
   ListItemText
 } from "@mui/material";
 import DECLogo from "../../components/logo";
-import { Close, Menu, Mail, Inbox } from "@mui/icons-material";
+import { Info, Menu, Feedback, Group, School, MenuBook, Home, AssignmentLate, Person } from "@mui/icons-material";
 
 const drawerWidth = "22rem";
 
 function Admin() {
   const [drawerOpen, setDrawer] = React.useState(true);
+  const [route, setRoute] = React.useState("dash")
+  
+  const renderComp = () => {
+    if (route === "dash") {
+      return <h1>Dashboard</h1>;
+    } else if (route === "role") {
+      return <h1>Role</h1>;
+    } else if (route === "role") {
+      return <h1>Role</h1>;
+    } else if (route === "dept") {
+      return <h1>Department</h1>;
+    } else if (route === "course") {
+      return <h1>Course</h1>;
+    } else if (route === "const") {
+      return <h1>Constraints</h1>;
+    } else {
+      return <h1>Something went wrong! Please refresh the page.</h1>
+    }
+  }
 
   return (
     <>
@@ -28,6 +47,7 @@ function Admin() {
           width: { sm: `calc(100% - ${drawerWidth})` },
           ml: { sm: `${drawerWidth}` },
         }}
+        elevation={false}
       >
         <Toolbar>
           <IconButton
@@ -41,7 +61,7 @@ function Admin() {
           >
             <Menu />
           </IconButton>
-          <h6>Responsive drawer</h6>
+          <h4>Admin</h4>
         </Toolbar>
       </AppBar>
       <Box
@@ -75,11 +95,20 @@ function Admin() {
             },
           }}
         >
-          {drawer}
+          {drawer(setRoute)}
         </Drawer>
       </Box>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          width: { sm: `calc(100% - ${drawerWidth})` },
+          float: "right",
+        }}
+      >
         <Toolbar />
+        {renderComp()}
         <Typography paragraph>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Rhoncus
@@ -114,30 +143,63 @@ function Admin() {
   );
 }
 
-const drawer = (
+const drawer = (setRoute) => (
   <div>
     <Toolbar />
     <Divider />
     <List>
-      {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            {index % 2 === 0 ? <Inbox /> : <Mail />}
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
+      <ListItem onClick={() => setRoute("dash")} button>
+        <ListItemIcon>
+          <Home />
+        </ListItemIcon>
+        <ListItemText primary={"Dashboard"} />
+      </ListItem>
+      <ListItem onClick={() => setRoute("role")} button>
+        <ListItemIcon>
+          <Group />
+        </ListItemIcon>
+        <ListItemText primary={"Roles"} />
+      </ListItem>
+      <ListItem onClick={() => setRoute("dept")} button>
+        <ListItemIcon>
+          <School />
+        </ListItemIcon>
+        <ListItemText primary={"Departments"} />
+      </ListItem>
+      <ListItem onClick={() => setRoute("course")} button>
+        <ListItemIcon>
+          <MenuBook />
+        </ListItemIcon>
+        <ListItemText primary={"Courses"} />
+      </ListItem>
+      <ListItem onClick={() => setRoute("const")} button>
+        <ListItemIcon>
+          <AssignmentLate />
+        </ListItemIcon>
+        <ListItemText primary={"Constraints"} />
+      </ListItem>
     </List>
     <Divider />
-    <List>
-      {["All mail", "Trash", "Spam"].map((text, index) => (
-        <ListItem button key={text}>
-          <ListItemIcon>
-            {index % 2 === 0 ? <Inbox /> : <Mail />}
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
+    <List style={{ position: "absolute", bottom: "0", width: "100%" }}>
+      <Divider />
+      <ListItem button>
+        <ListItemIcon>
+          <Person />
+        </ListItemIcon>
+        <ListItemText primary={"Account"} />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <Feedback />
+        </ListItemIcon>
+        <ListItemText primary={"Contact"} />
+      </ListItem>
+      <ListItem button>
+        <ListItemIcon>
+          <Info />
+        </ListItemIcon>
+        <ListItemText primary={"About"} />
+      </ListItem>
     </List>
   </div>
 );

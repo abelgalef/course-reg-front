@@ -2,10 +2,11 @@ import { Button, Grid, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { signup, clearError } from "../../redux/auth";
+import {useEffect} from "react"
 
 function Signup() {
-  const [firstname, setFirst] = React.useState("");
-  const [lastname, setLast] = React.useState("");
+  const [first_name, setFirst] = React.useState("");
+  const [last_name, setLast] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [department, setDept] = React.useState(0);
   const [password, setPass1] = React.useState("");
@@ -15,15 +16,17 @@ function Signup() {
   const { signupError } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    dispatch(clearError())
+  },[])
+
   const handelSubmit = (e) => {
     e.preventDefault();
-
-    if (password !== confError) {
+    if (password !== confPass) {
       setConfError(true);
       return;
     }
-
-    dispatch(signup({ firstname, lastname, email, department, password }));
+    dispatch(signup({ first_name, last_name, email, department, password }));
   };
 
   return (
@@ -42,11 +45,13 @@ function Signup() {
             label="First Name"
             required
             fullWidth
+            helperText={signupError.FirstName ? signupError.FirstName : ""}
+            error={signupError.FirstName ? true : false}
             variant="outlined"
-            value={firstname}
+            value={first_name}
             onChange={(e) => {
               setFirst(e.target.value);
-              if (signupError !== {}) {
+              if (signupError.FirsName) {
                 dispatch(clearError());
               }
             }}
@@ -59,10 +64,12 @@ function Signup() {
             variant="outlined"
             required
             fullWidth
-            value={lastname}
+            helperText={signupError.LastName ? signupError.LastName : ""}
+            error={signupError.LastName ? true : false}
+            value={last_name}
             onChange={(e) => {
               setLast(e.target.value);
-              if (signupError !== {}) {
+              if (signupError.LastName) {
                 dispatch(clearError());
               }
             }}
@@ -75,10 +82,12 @@ function Signup() {
             variant="outlined"
             required
             fullWidth
+            helperText={signupError.Email ? signupError.Email : ""}
+            error={signupError.Email ? true : false}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              if (signupError !== {}) {
+              if (signupError.Email) {
                 dispatch(clearError());
               }
             }}
@@ -105,13 +114,16 @@ function Signup() {
             label="Password"
             type="password"
             variant="outlined"
-            helperText="Minimum 6 letters"
+            helperText={
+              signupError.Password ? signupError.Password : "Minimum 6 letters"
+            }
+            error={signupError.Password ? true : false}
             required
             fullWidth
             value={password}
             onChange={(e) => {
               setPass1(e.target.value);
-              if (signupError !== {}) {
+              if (signupError.Password) {
                 dispatch(clearError());
               }
             }}
@@ -121,8 +133,13 @@ function Signup() {
           <TextField
             label="Confirm Password"
             type="password"
+            error={confError}
             variant="outlined"
-            helperText="Make sure your passwords match"
+            helperText={
+              confError
+                ? "Passwords don't match"
+                : "Make sure your passwords match"
+            }
             required
             fullWidth
             value={confPass}
