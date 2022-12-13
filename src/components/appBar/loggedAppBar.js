@@ -11,8 +11,8 @@ function LoggedInAppBar() {
     <AppBar
       position="fixed"
       sx={{
-        width: { sm: `calc(100% - ${drawerWidth})` },
-        ml: { sm: `${drawerWidth}` },
+        width: { md: `calc(100% - ${drawerWidth})` },
+        ml: { md: `${drawerWidth}` },
       }}
       elevation={false}
     >
@@ -22,7 +22,7 @@ function LoggedInAppBar() {
           aria-label="open drawer"
           edge="start"
           onClick={() => dispatch(toggleDrawer())}
-          sx={{ mr: 2, display: { sm: "none" } }}
+          sx={{ mr: 2, display: { md: "none" } }}
         >
           <Menu />
         </IconButton>

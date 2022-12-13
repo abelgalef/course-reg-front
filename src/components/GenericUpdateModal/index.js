@@ -25,7 +25,7 @@ function GenericUpdate() {
               variant="outlined"
               value={value}
               label={label}
-              multiline={useBigTextField || false}
+              multiline={useBigTextField}
               maxRows={4}
             />
           </Grid>

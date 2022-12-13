@@ -7,7 +7,7 @@ import {
   Avatar,
   CircularProgress,
 } from "@mui/material";
-import { Delete, Check, Close } from "@mui/icons-material";
+import { Add, Check, Close, Person } from "@mui/icons-material";
 import { green, orange, red } from "@mui/material/colors";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -18,31 +18,48 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
   const [hover, setHover] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
 
   const { token } = useSelector((state) => state.auth);
 
   const handelClick = () => {
     setLoading(true);
-    
+
     axios
-      .post(`${BACKEND_ENDPOINT}/role/revok-perm/${roleId}/${id}`, {
+      .put(`${BACKEND_ENDPOINT}/role/add-users/${roleId}/${id}`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then((res) => {
-        handelEdgeClick(id)
         setLoading(false);
       })
       .catch((err) => {
-        dispatch(
-          openError({
-            type: "error",
-            header: "Something Went Wrong",
-            desc: err.data,
-          })
-        );
+        if (err.response) {
+          dispatch(
+            openError({
+              type: "error",
+              header: "Something Went Wrong",
+              desc: err.data,
+            })
+          );
+        } else if (err.request) {
+          dispatch(
+            openError({
+              type: "error",
+              header: "Something Went Wrong",
+              desc: "The request was made but no response was received. Make sure the back-end is reachable.",
+            })
+          );
+        } else {
+          dispatch(
+            openError({
+              type: "error",
+              header: "Something Went Wrong",
+              desc: err.message,
+            })
+          );
+        }
 
-        console.log(err.data)
+        console.log({ err: err, "err data": err.data, "err req": err.request });
         setLoading(false);
       });
   };
@@ -51,10 +68,22 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
     <ListItem
       alignItems="flex-start"
       disabled={loading}
+      secondaryAction={
+        <IconButton
+          edge="end"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          color={hover ? "error" : "default"}
+          onClick={() => handelClick()}
+          disabled={loading}
+        >
+          <Add />
+        </IconButton>
+      }
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: hasRole ? green[500] : red[300] }}>
-          {hasRole ? <Check /> : <Close />}
+        <Avatar>
+          <Person />
         </Avatar>
         {loading && (
           <CircularProgress

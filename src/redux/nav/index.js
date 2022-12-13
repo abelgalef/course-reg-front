@@ -29,7 +29,7 @@ export const navSlice = createSlice({
     },
     openError: (state, action) => {
       state.errorOpen = true;
-      state.dialogProps = action.payload.props;
+      state.errorProps = action.payload;
     },
     closeError: (state) => {
       state.errorOpen = false;

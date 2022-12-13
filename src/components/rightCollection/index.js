@@ -20,26 +20,28 @@ function RightCollection() {
   const { rightLoading, roleLoading, rights, roles } = useSelector(
     (state) => state.role
   );
+
   const roleID = useSelector((state) => state.auth.user.role_id);
-  
-  const myRole = useMemo(() => roles.find((role) => role.id === roleID), [roles, roleID]);
-  
+  const myRole = useMemo(
+    () => roles.find((role) => role.id === roleID),
+    [roles, roleID]
+  );
   const hasPerm = (tag) => {
-    let found = myRole.premissions.find((perm) => perm.tag === tag);
-    return found? true : false
+    if (myRole !== undefined) {
+      let found = myRole.premissions.find((perm) => perm.tag === tag);
+      return found ? true : false;
+    }
+    return false
   };
 
   return (
     <Paper variant="outlined" style={{ position: "relative" }}>
       {rightLoading || roleLoading ? (
-        <Backdrop
-          style={{ position: "absolute" }} 
-          open={true}
-        >
+        <Backdrop style={{ position: "absolute" }} open={true}>
           <CircularProgress color="inherit" />
         </Backdrop>
       ) : (
-        <List sx={{ width: "100%", height: "25rem", overflow: "auto" }}>
+        <List sx={{ width: "100%", height: "45rem", overflow: "auto" }}>
           {rights.length === 0 ? (
             <div
               style={{
@@ -60,7 +62,12 @@ function RightCollection() {
             </div>
           ) : (
             rights.map(({ tag, description }, i) => (
-              <RoleItem key={i} tag={tag} desc={description} hasRole={hasPerm(tag)} />
+              <RoleItem
+                key={i}
+                tag={tag}
+                desc={description}
+                hasRole={hasPerm(tag)}
+              />
             ))
           )}
         </List>

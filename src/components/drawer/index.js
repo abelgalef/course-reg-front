@@ -26,7 +26,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { toggleDrawer } from "../../redux/nav";
 import { useNavigate } from "react-router-dom";
-import DECLogo from "../logo"
+import DECLogo from "../logo";
 
 const drawerWidth = "22rem";
 
@@ -43,9 +43,9 @@ function LeftDrawer() {
       <Drawer
         variant="temporary"
         open={drawerOpen}
-              onClose={() => dispatch(toggleDrawer())}
+        onClose={() => dispatch(toggleDrawer())}
         sx={{
-          display: { xs: "block", sm: "none" },
+          display: { xs: "block", sm: "block", md: "none" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
@@ -58,7 +58,7 @@ function LeftDrawer() {
         open
         variant="permanent"
         sx={{
-          display: { xs: "none", sm: "block" },
+          display: { xs: "none", sm: "none", md: "block" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
@@ -73,7 +73,7 @@ function LeftDrawer() {
 
 const drawer = (setRoute) => (
   <div>
-    <Toolbar style={{padding: ".5rem"}}>
+    <Toolbar style={{ padding: ".5rem" }}>
       <DECLogo />
     </Toolbar>
     <Divider />

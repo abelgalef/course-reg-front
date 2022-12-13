@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
 import {
   Grid,
-  Paper,
   Typography,
   Divider,
-  List,
   ListItem,
   ListItemAvatar,
-  Avatar,
   ListItemText,
-  IconButton,
+  Avatar,
 } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { orange, red, green } from "@mui/material/colors";
 import {
   GroupAdd,
   FactCheck,
@@ -19,88 +17,80 @@ import {
   Close,
   GroupRemove,
 } from "@mui/icons-material";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
-import { getRight, getRole } from "../../redux/role";
 import PaperButton from "../../components/paperButton";
-import { orange, red, green } from "@mui/material/colors";
-import RightCollection from "../../components/rightCollection";
+import { useDispatch, useSelector } from "react-redux";
+import { getDepts } from "../../redux/department";
 import { openModal } from "../../redux/nav";
-import CustomModal from "../../components/customModal";
+import { useLocation } from "react-router-dom";
+import moment from "moment";
 
-const conStyle = { width: "80vw" };
+const columns = [
+  { field: "id", headerName: "ID", width: 70 },
+  { field: "name", headerName: "Name", width: 230 },
+  { field: "dept_code", headerName: "Code", width: 130, sortable: false },
+  {
+    field: "created_at", headerName: "Created At", width: 230, valueGetter: (params) => {
+      return moment(params.row.created_at).fromNow()
+    }
+  },
+];
 
-function Role() {
-  const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "tag", headerName: "Tag", width: 230 },
-    { field: "active", headerName: "Active", width: 130 },
-    {
-      field: "description",
-      headerName: "Description",
-      description: "This column has a value getter and is not sortable.",
-      sortable: false,
-      width: 500,
-    },
-  ];
-
-  const [hover1, setHover1] = useState(false);
+function Department() {
   const [hover2, setHover2] = useState(false);
   const [hover3, setHover3] = useState(false);
-
+  
   const dispatch = useDispatch();
+  const location = useLocation();
 
-  const { roles, rights, roleLoading, rightLoading } = useSelector(
-    (state) => state.role
-  );
-
+  const { depts, pending } = useSelector((state) => state.dept);
+    
   useEffect(() => {
-    dispatch(getRole());
-  }, []);
+    dispatch(getDepts());
+  }, [location, dispatch]);
 
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={9}>
+      <Grid item md={12} lg={9}>
         <Grid container spacing={2} xs={12}>
           <Grid style={{ paddingBottom: ".75rem" }} item xs={12}>
             <Typography variant="h5">
-              All Roles
+              All Departments
               <Typography variant="body2">
-                A list of all the roles available
+                A list of all the departments available
               </Typography>
             </Typography>
             <Divider style={{ marginTop: "1rem" }} />
             <br />
             <DataGrid
               columns={columns}
-              rows={roles}
+              rows={depts}
               pageSize={8}
               rowsPerPageOptions={[5]}
-              loading={roleLoading}
+              loading={pending}
               autoHeight
               onRowClick={(params) =>
                 dispatch(
                   openModal({
-                    ID: "ROLE_DETAIL",
+                    ID: "DEPT_DETAIL",
                     props: params.row,
-                    conStyle: conStyle,
+                    conStyle: { width: "80vw" },
                   })
                 )
               }
             />
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography variant="h5">
-              Create A New Role
+            <Typography variant="h6">
+              Create A New Department
               <Typography variant="body2">
-                You can create a new role here
+                You can create a new department here
               </Typography>
             </Typography>
             <Divider style={{ marginTop: "1rem" }} />
             <br />
             <PaperButton
-              hoverStart={() => setHover1(true)}
-              hoverEnd={() => setHover1(false)}
+              hoverStart={() => setHover2(true)}
+              hoverEnd={() => setHover2(false)}
             >
               <ListItem
                 onClick={() =>
@@ -108,11 +98,11 @@ function Role() {
                     openModal({
                       ID: "GENERIC_CREATE",
                       props: {
-                        header: "Create A New Role",
+                        header: "Create A New Department",
                         caption:
                           "You can create a new role here by entering the required information",
-                        data: { tag: "", description: "" },
-                        url: "/role",
+                        data: { name: "", dept_code: "" },
+                        url: "/dept",
                       },
                       conStyle: { width: "40vw" },
                     })
@@ -126,17 +116,17 @@ function Role() {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary="Create a role"
-                  secondary="Click here to create a role"
+                  primary="Create a new department"
+                  secondary="Click here to create a department"
                 />
               </ListItem>
             </PaperButton>
           </Grid>
           <Grid item md={6} xs={12}>
-            <Typography variant="h5">
-              Delete A Role
+            <Typography variant="h6">
+              Delete A Department
               <Typography variant="body2">
-                You can create delete roles here
+                You can create delete departments here
               </Typography>
             </Typography>
             <Divider style={{ marginTop: "1rem" }} />
@@ -153,9 +143,9 @@ function Role() {
                       props: {
                         header: "Delete An Existing Role",
                         caption: "Select a role to delete.",
-                        data: roles,
-                        url: "/role",
-                        type: "role",
+                        data: depts,
+                        url: "/dept",
+                        type: "dept",
                       },
                       conStyle: { width: "40vw" },
                     })
@@ -169,27 +159,26 @@ function Role() {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary="Delete a role"
-                  secondary="Click here to delete a role"
+                  primary="Delete a department"
+                  secondary="Click here to delete a department"
                 />
               </ListItem>
             </PaperButton>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} md={3}>
+      <Grid item md={12} lg={3}>
         <Typography variant="h5">
-          All Rights
+          Your Department
           <Typography variant="body2">
-            A list of all the rights available
+            A detailed view of your department
           </Typography>
         </Typography>
         <Divider style={{ marginTop: "1rem" }} />
         <br />
-        <RightCollection />
       </Grid>
     </Grid>
   );
 }
 
-export default Role;
+export default Department;

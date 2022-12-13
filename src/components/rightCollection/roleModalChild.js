@@ -11,16 +11,18 @@ import {
   ListItemText,
   Collapse,
 } from "@mui/material";
-import { East, GppBad, GppGood, Edit } from "@mui/icons-material";
+import { East, Person, Add } from "@mui/icons-material";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import RoleItem from "./roleItem";
 import PaperButton from "../paperButton";
-import { orange, red, green } from "@mui/material/colors";
+import { orange, red, green, blue } from "@mui/material/colors";
 import { DataGrid } from "@mui/x-data-grid";
 import { updateStateRole, openModal } from "../../redux/nav";
 import { getRole } from "../../redux/role";
 import { TransitionGroup } from "react-transition-group";
+import { BACKEND_ENDPOINT } from "../../redux/constants";
+import RolePlaceholder from "./roleModalPlaceholder";
 
 const cols = [
   { field: "id", headerName: "ID", width: 70 },
@@ -36,6 +38,8 @@ function RoleModalChild() {
   const dispatch = useDispatch();
   console.log(modalProps);
 
+  // TODO: SEND THE REQUEST FOR THE ROLE DETAILS FROM HERE SO THAT THE MODAL HYDRATES WHEN THE MODAL OPENS
+
   const removePermFromList = (id) => {
     let modalClone = structuredClone(modalProps);
     modalClone.premissions = modalClone.premissions.filter(
@@ -44,7 +48,7 @@ function RoleModalChild() {
     dispatch(getRole());
     dispatch(updateStateRole(modalClone));
   };
-
+  // return <RolePlaceholder /> IF THE ROLE IS LOADING USE THIS
   return (
     <Box>
       <Grid container spaceing={2}>
@@ -81,26 +85,33 @@ function RoleModalChild() {
                 <PaperButton>
                   <ListItem
                     alignItems="flex-start"
-                    onClick={() => console.log("clicked")}
+                    onClick={() =>
+                      dispatch(
+                        openModal({
+                          ID: "ROLE_USER_CHOOSER",
+                          props: {
+                            data: {
+                              tag: modalProps.tag,
+                              description: modalProps.description,
+                            },
+                            header: "Add a user to this role group",
+                            caption:
+                              "Enter the name of the user you want to add",
+                            roleId: modalProps.id,
+                          },
+                          conStyle: { width: "30vw" },
+                        })
+                      )
+                    }
                   >
                     <ListItemAvatar>
-                      <Avatar
-                        sx={
-                          modalProps.active
-                            ? { bgcolor: red[500] }
-                            : { bgcolor: green[500] }
-                        }
-                      >
-                        {modalProps.active ? <GppBad /> : <GppGood />}
+                      <Avatar sx={{ bgcolor: blue[500] }}>
+                        <Person />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary={
-                        modalProps.active
-                          ? "Deactivate this role (Currently ON)"
-                          : "Activate this role (Currently OFF)"
-                      }
-                      secondary="Click here to toggle this role ON or OFF"
+                      primary="Add users to this role group"
+                      secondary="Click here to Add or Remove users from this group"
                     />
                   </ListItem>
                 </PaperButton>
@@ -111,17 +122,17 @@ function RoleModalChild() {
                     onClick={() =>
                       dispatch(
                         openModal({
-                          ID: "GENERIC_UPDATE",
+                          ID: "PERM_CHOOSER",
                           props: {
                             data: {
                               tag: modalProps.tag,
                               description: modalProps.description,
                             },
-                            header: "Update some details of the role",
-                            caption:
-                              "Change some details of the role in the field bellow",
+                            header: "Give a permission to a role",
+                            caption: "Enter a keyword in the search bar.",
+                            roleId: modalProps.id,
                           },
-                          conStyle: { width: "60vw" },
+                          conStyle: { width: "30vw" },
                         })
                       )
                     }
@@ -129,12 +140,12 @@ function RoleModalChild() {
                   >
                     <ListItemAvatar>
                       <Avatar sx={{ bgcolor: orange[500] }}>
-                        <Edit />
+                        <Add />
                       </Avatar>
                     </ListItemAvatar>
                     <ListItemText
-                      primary="Update this role"
-                      secondary="Click here to change details for this role"
+                      primary="Add a right to this role"
+                      secondary="Click here to give this role a new permission"
                     />
                     <East sx={{ m: "auto" }} />
                   </ListItem>
@@ -170,12 +181,7 @@ function RoleModalChild() {
           <DataGrid
             columns={cols}
             rows={[
-              ...modalProps.users,
-              ...modalProps.users,
-              ...modalProps.users,
-              ...modalProps.users,
-              ...modalProps.users,
-              ...modalProps.users,
+              ...modalProps.users
             ]}
             pageSize={5}
             rowsPerPageOptions={[5]}

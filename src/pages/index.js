@@ -6,6 +6,7 @@ import LeftDrawer from "../components/drawer";
 import Role from "./role";
 import CustomModal from "../components/customModal";
 import ErrorDialog from "../components/Error"
+import Department from "./department";
 
 const drawerWidth = "22rem";
 
@@ -20,14 +21,14 @@ function Pages() {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth})` },
+          width: { md: `calc(100% - ${drawerWidth})` },
           float: "right",
         }}
       >
         <Toolbar />
         <Routes>
           <Route path="/" element={<h1>Dashboard</h1>} />
-          <Route path="/department" element={<h1>Department</h1>} />
+          <Route path="/department" element={<Department/>} />
           <Route path="/courses" element={<h1>Courses</h1>} />
           <Route path="/role" element={<Role/>} />
         </Routes>
