@@ -19,7 +19,7 @@ import { BACKEND_ENDPOINT } from "../../redux/constants";
 import Placeholder from "../modalPlaceholder/roleModalPlaceholder";
 import PaperButton from "../paperButton";
 import { orange, red, green, blue } from "@mui/material/colors";
-import { East, Person, Add } from "@mui/icons-material";
+import { East, Rule, Add } from "@mui/icons-material";
 import { openModal } from "../../redux/nav";
 import moment from "moment";
 import { DataGrid } from "@mui/x-data-grid";
@@ -53,6 +53,19 @@ const cols = [
     },
   },
 ];
+
+function Empty() {
+  return (
+    <div style={{ textAlign: "center", transform: "translateY(8rem)" }}>
+      <Typography variant="h5" component="div">
+        There is nothing to display
+        <Typography variant="body2" component="div">
+          Add more courses to see them here
+        </Typography>
+      </Typography>
+    </div>
+  );
+}
 
 function DeptDetail() {
   const { modalProps } = useSelector((state) => state.nav);
@@ -91,7 +104,7 @@ function DeptDetail() {
             <Divider style={{ marginTop: "1rem" }} />
             <br />
           </Grid>
-          <Grid spacing={4} item xs={12} lg={8}>
+          <Grid item xs={12} lg={8}>
             <Grid container rowSpacing={4} columnSpacing={4}>
               <Grid item xs={6}>
                 <Typography variant="h6">
@@ -119,78 +132,78 @@ function DeptDetail() {
                   {moment(dept.created_at).fromNow()}
                 </Typography>
               </Grid>
-              <Grid item xs={12}>
-                <Grid item xs={6} sx={{ pr: 2 }}>
-                  <PaperButton>
-                    <ListItem
-                      alignItems="flex-start"
-                      onClick={() =>
-                        dispatch(
-                          openModal({
-                            ID: "ROLE_USER_CHOOSER",
-                            props: {
-                              data: {
-                                tag: modalProps.tag,
-                                description: modalProps.description,
-                              },
-                              header: "Add a user to this role group",
-                              caption:
-                                "Enter the name of the user you want to add",
-                              roleId: modalProps.id,
-                            },
-                            conStyle: { width: "30vw" },
-                          })
-                        )
-                      }
-                    >
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: blue[500] }}>
-                          <Person />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary="Add users to this role group"
-                        secondary="Click here to Add or Remove users from this group"
-                      />
-                    </ListItem>
-                  </PaperButton>
-                </Grid>
-                <Grid item xs={6} sx={{ pl: 2 }}>
-                  <PaperButton>
-                    <ListItem
-                      onClick={() =>
-                        dispatch(
-                          openModal({
-                            ID: "PERM_CHOOSER",
-                            props: {
-                              data: {
-                                tag: modalProps.tag,
-                                description: modalProps.description,
-                              },
-                              header: "Give a permission to a role",
-                              caption: "Enter a keyword in the search bar.",
-                              roleId: modalProps.id,
-                            },
-                            conStyle: { width: "30vw" },
-                          })
-                        )
-                      }
-                      alignItems="flex-start"
-                    >
-                      <ListItemAvatar>
-                        <Avatar sx={{ bgcolor: orange[500] }}>
-                          <Add />
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary="Add a right to this role"
-                        secondary="Click here to give this role a new permission"
-                      />
-                      <East sx={{ m: "auto" }} />
-                    </ListItem>
-                  </PaperButton>
-                </Grid>
-              </Grid>
+            </Grid>
+            <br />
+            <br />
+            <br />
+            <br />
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <PaperButton>
+                <ListItem
+                  alignItems="flex-start"
+                  onClick={() =>
+                    dispatch(
+                      openModal({
+                        ID: "GENERIC_CREATE",
+                        props: {
+                          data: {
+                            change: "", this: ""
+                          },
+                          header: "Add a new Constraint to this department",
+                          caption: "Enter the details of the new constraint",
+                          roleId: modalProps.id,
+                        },
+                        conStyle: { width: "30vw" },
+                      })
+                    )
+                  }
+                >
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: blue[500] }}>
+                      <Rule />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary="Add a new constraint"
+                    secondary="Click here to add a new constraint to the department"
+                  />
+                </ListItem>
+              </PaperButton>
+            </Grid>
+            <Grid item xs={6}>
+              <PaperButton>
+                <ListItem
+                  onClick={() =>
+                    dispatch(
+                      openModal({
+                        ID: "GENERIC_UPDATE",
+                        props: {
+                          data: dept,
+                          header: "Update this department",
+                          caption: "Update the details of the department",
+                          url: "/dept",
+                          ID: dept.id,
+                        },
+                        conStyle: { width: "30vw" },
+                      })
+                    )
+                  }
+                  alignItems="flex-start"
+                >
+                  <ListItemAvatar>
+                    <Avatar sx={{ bgcolor: orange[500] }}>
+                      <Add />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary="Update this department"
+                    secondary="Click here to change the details of this department"
+                  />
+                  <East sx={{ m: "auto" }} />
+                </ListItem>
+              </PaperButton>
             </Grid>
           </Grid>
         </Grid>
@@ -207,26 +220,8 @@ function DeptDetail() {
           </Grid>
 
           <Grid item sx={12}>
-            <Paper variant="outlined">
-              <List sx={{ width: "100%", height: "20rem", overflow: "auto" }}>
-                <TransitionGroup>
-                  {dept.courses.map(({ id, name, course_id, credits }, i) => (
-                    <Collapse key={i}>
-                      <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
-                          <Avatar>
-                            <Person />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={name}
-                          secondary={course_id + " ● Credits: " + credits}
-                        />
-                      </ListItem>
-                    </Collapse>
-                  ))}
-                </TransitionGroup>
-              </List>
+            <Paper variant="outlined" style={{ height: "20rem" }}>
+              <Empty />
             </Paper>
           </Grid>
         </Grid>

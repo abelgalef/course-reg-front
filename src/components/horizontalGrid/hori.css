@@ -1,0 +1,3 @@
+.Hover-Container::-webkit-scrollbar {
+  display: none;
+}

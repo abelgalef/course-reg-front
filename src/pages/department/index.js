@@ -6,8 +6,9 @@ import {
   ListItemAvatar,
   ListItemText,
   Avatar,
+  Paper,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { orange, red, green } from "@mui/material/colors";
 import {
@@ -23,27 +24,62 @@ import { getDepts } from "../../redux/department";
 import { openModal } from "../../redux/nav";
 import { useLocation } from "react-router-dom";
 import moment from "moment";
+import BigCard from "../../components/HisCard";
+import HorizontalGrid from "../../components/horizontalGrid";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
   { field: "name", headerName: "Name", width: 230 },
   { field: "dept_code", headerName: "Code", width: 130, sortable: false },
   {
-    field: "created_at", headerName: "Created At", width: 230, valueGetter: (params) => {
-      return moment(params.row.created_at).fromNow()
-    }
+    field: "created_at",
+    headerName: "Created At",
+    width: 230,
+    valueGetter: (params) => {
+      return moment(params.row.created_at).fromNow();
+    },
   },
 ];
 
 function Department() {
   const [hover2, setHover2] = useState(false);
   const [hover3, setHover3] = useState(false);
-  
+
   const dispatch = useDispatch();
   const location = useLocation();
 
   const { depts, pending } = useSelector((state) => state.dept);
+  const { history } = useSelector((state) => state.history);
+  
+  const { totCourses, totConst, lastConst } = useMemo(() => {
+    let totCourses = 0;
+    let totConst = 0;
+    let lastConst = { id: null, name: null, date: new Date(0) };
+
+    depts.forEach((el) => {
+      totCourses += el.courses.length;
+      totConst += el.constraints.length;
+
+      el.constraints.forEach((item) => {
+        if (new Date(item.created_at) > lastConst.date) {
+          lastConst = {
+            id: el.id,
+            name: el.name,
+            date: new Date(item.created_at),
+          };
+        }
+      });
+    });
+    return { totCourses, totConst, lastConst };
+  }, [depts]);
+
+  const deptHis = useMemo(() => {
+    let his = []
     
+    his = history.filter(item => item.tag === "DEPT")
+    return his.reverse();
+  }, [history])
+
   useEffect(() => {
     dispatch(getDepts());
   }, [location, dispatch]);
@@ -59,12 +95,12 @@ function Department() {
                 A list of all the departments available
               </Typography>
             </Typography>
-            <Divider style={{ marginTop: "1rem" }} />
+            <Divider />
             <br />
             <DataGrid
               columns={columns}
               rows={depts}
-              pageSize={8}
+              pageSize={3}
               rowsPerPageOptions={[5]}
               loading={pending}
               autoHeight
@@ -167,15 +203,70 @@ function Department() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item md={12} lg={3}>
-        <Typography variant="h5">
-          Your Department
+      <Grid item xs={12} lg={3}>
+        <Grid item xs={12}>
+          <Typography variant="h5">
+            Department Details
+            <Typography variant="body2">
+              A sumerized view of all departments
+            </Typography>
+          </Typography>
+          <Divider style={{ marginTop: "1rem" }} />
+          <br />
+        </Grid>
+        <Grid item xs={12}>
+          <Paper variant="outlined">
+            <ListItem alignItems="flex-start">
+              <ListItemText>
+                <Typography variant="h6">
+                  {`${depts.length} Departments`}
+                  <Typography variant="body2">
+                    Total number of departments
+                  </Typography>
+                </Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem alignItems="flex-start">
+              <ListItemText>
+                <Typography variant="h6">
+                  {`${totCourses} Courses Available`}
+                  <Typography variant="body2">In All Departments</Typography>
+                </Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem alignItems="flex-start">
+              <ListItemText>
+                <Typography variant="h6">
+                  {`${totConst} Constraints Available`}
+                  <Typography variant="body2">In All Departments</Typography>
+                </Typography>
+              </ListItemText>
+            </ListItem>
+            <ListItem alignItems="flex-start">
+              <ListItemText>
+                <Typography variant="h6">
+                  {`Last Const Change on ${moment(lastConst.date).format(
+                    "ll"
+                  )}`}
+                  <Typography variant="body2">{`In ${lastConst.name} Department`}</Typography>
+                </Typography>
+              </ListItemText>
+            </ListItem>
+          </Paper>
+        </Grid>
+      </Grid>
+      <Grid sx={{ mt: 2 }} item xs={12}>
+        <Typography variant="h6">
+          Your Depatment View History
           <Typography variant="body2">
-            A detailed view of your department
+            All the departments you viewed
           </Typography>
         </Typography>
-        <Divider style={{ marginTop: "1rem" }} />
+        <Divider />
         <br />
+        <HorizontalGrid>
+          {deptHis.map(el => <BigCard {...el}/>)}
+        </HorizontalGrid>
       </Grid>
     </Grid>
   );

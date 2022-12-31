@@ -27,6 +27,9 @@ import { orange, red, green } from "@mui/material/colors";
 import RightCollection from "../../components/rightCollection";
 import { openModal } from "../../redux/nav";
 import CustomModal from "../../components/customModal";
+import {useMemo} from "react"
+import BigCard from "../../components/HisCard";
+import HorizontalGrid from "../../components/horizontalGrid";
 
 const conStyle = { width: "80vw" };
 
@@ -53,6 +56,14 @@ function Role() {
   const { roles, rights, roleLoading, rightLoading } = useSelector(
     (state) => state.role
   );
+  const { history } = useSelector((state) => state.history);
+
+   const roleHis = useMemo(() => {
+     let his = [];
+
+     his = history.filter((item) => item.tag === "ROLE");
+     return his.reverse();
+   }, [history]);
 
   useEffect(() => {
     dispatch(getRole());
@@ -69,12 +80,12 @@ function Role() {
                 A list of all the roles available
               </Typography>
             </Typography>
-            <Divider style={{ marginTop: "1rem" }} />
+            <Divider />
             <br />
             <DataGrid
               columns={columns}
               rows={roles}
-              pageSize={8}
+              pageSize={3}
               rowsPerPageOptions={[5]}
               loading={roleLoading}
               autoHeight
@@ -174,6 +185,21 @@ function Role() {
                 />
               </ListItem>
             </PaperButton>
+          </Grid>
+          <Grid sx={{ mt: 2 }} item xs={12}>
+            <Typography variant="h6">
+              Your Depatment View History
+              <Typography variant="body2">
+                All the departments you viewed
+              </Typography>
+            </Typography>
+            <Divider />
+            <br />
+            <HorizontalGrid>
+              {roleHis.map((el) => (
+                <BigCard {...el} />
+              ))}
+            </HorizontalGrid>
           </Grid>
         </Grid>
       </Grid>
