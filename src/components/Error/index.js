@@ -32,7 +32,7 @@ function ErrorModal() {
       sx={!errorOpen && {display: "none"}}
     >
       <DialogTitle>
-        <b>{errorProps.header}</b>
+        <b>{errorProps.desc.overview || errorProps.header}</b>
       </DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
@@ -56,7 +56,7 @@ function ErrorModal() {
           )}
           <Grid item xs={10}>
             <DialogContentText id="alert-dialog-slide-description">
-              {errorProps.desc}
+              {errorProps.desc.e || errorProps.desc}
             </DialogContentText>
           </Grid>
         </Grid>

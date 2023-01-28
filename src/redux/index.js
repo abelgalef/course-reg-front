@@ -4,6 +4,7 @@ import nav, { openModal } from "./nav";
 import role from "./role";
 import dept from "./department";
 import history from "./history";
+import course from "./course"
 import { addHistory } from "./history";
 
 const modalListenerMiddleware = createListenerMiddleware();
@@ -101,6 +102,7 @@ export default configureStore({
     role,
     dept,
     history,
+    course
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().prepend(modalListenerMiddleware.middleware),

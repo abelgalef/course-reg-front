@@ -2,26 +2,42 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BACKEND_ENDPOINT } from "../constants";
 
-export const login = createAsyncThunk("auth/login", async (payload, {rejectWithValue}) => {
-  try {
-    return await (await axios.post(`${BACKEND_ENDPOINT}/auth/login`, payload)).data;
-  } catch (error) {
-    return rejectWithValue(error.response.data)
+export const login = createAsyncThunk(
+  "auth/login",
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await (
+        await axios.post(`${BACKEND_ENDPOINT}/auth/login`, payload)
+      ).data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
-});
+);
 
-export const signup = createAsyncThunk("auth/signup", async (payload, { rejectWithValue }) => {
-  try {
-    return await (await axios.post(`${BACKEND_ENDPOINT}/auth/register`, payload)).data;
-  } catch (error) {
-    return rejectWithValue(error.response.data)
+export const signup = createAsyncThunk(
+  "auth/signup",
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await (
+        await axios.post(`${BACKEND_ENDPOINT}/auth/register`, payload)
+      ).data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
   }
-   
-});
+);
 
-export const getUser = createAsyncThunk("auth/getUser", async (payload, {getState}) => {
-  return await (await axios.get(`${BACKEND_ENDPOINT}/user`, { headers: { Authorization: `Token ${getState().auth.token}` } })).data;
-});
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (payload, { getState }) => {
+    return await (
+      await axios.get(`${BACKEND_ENDPOINT}/user`, {
+        headers: { Authorization: `Token ${getState().auth.token}` },
+      })
+    ).data;
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -32,13 +48,20 @@ export const authSlice = createSlice({
     authenticated: false,
     token: localStorage.getItem("token") || null,
     loginError: false,
-    signupError: {}
+    signupError: {},
   },
   reducers: {
     clearError: (state) => {
-      state.loginError = false
-      state.signupError = {}
-    } 
+      state.loginError = false;
+      state.signupError = {};
+    },
+    logout: (state) => {
+      state.authenticated = false;
+      localStorage.removeItem("token");
+      state.user = null;
+      state.loading = false;
+      state.getUserLoading = false;
+    },
   },
   extraReducers(builder) {
     builder
@@ -76,7 +99,9 @@ export const authSlice = createSlice({
       .addCase(getUser.pending, (state, action) => {
         state.getUserLoading = true;
       })
-      .addMatcher((action) => action.type.startsWith("auth") && action.type.endsWith("/fulfilled"),
+      .addMatcher(
+        (action) =>
+          action.type.startsWith("auth") && action.type.endsWith("/fulfilled"),
         (state, action) => {
           state.authenticated = true;
           state.loading = false;

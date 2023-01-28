@@ -73,7 +73,7 @@ function LeftDrawer() {
 
 const drawer = (setRoute) => (
   <div>
-    <Toolbar style={{ padding: ".5rem" }}>
+    <Toolbar style={{ padding: ".325rem", background: "#1976d2", color: "white" }}>
       <DECLogo />
     </Toolbar>
     <Divider />
@@ -101,12 +101,6 @@ const drawer = (setRoute) => (
           <MenuBook />
         </ListItemIcon>
         <ListItemText primary={"Courses"} />
-      </ListItem>
-      <ListItem onClick={() => setRoute("const")} button>
-        <ListItemIcon>
-          <AssignmentLate />
-        </ListItemIcon>
-        <ListItemText primary={"Constraints"} />
       </ListItem>
     </List>
     <Divider />

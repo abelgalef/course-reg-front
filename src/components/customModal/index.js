@@ -2,12 +2,16 @@ import { Modal, Box } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { closeModal } from "../../redux/nav";
+import CourseDetail from "../courseDetail";
+import CreateCourse from "../createCourse";
 import DeptDetail from "../deptDetail";
 import GenericCreate from "../GenericCreateModal";
 import GenericDeleteModal from "../GenericDeleteModal";
 import GenericUpdate from "../GenericUpdateModal";
 import PermChooser from "../PermChooser";
 import RoleModalChild from "../rightCollection/roleModalChild";
+import SearchForTeachers from "../searchTeacher";
+import TakeCourse from "../takeCourse";
 import UserChooser from "../UserChooser";
 
 const modals = {
@@ -17,7 +21,11 @@ const modals = {
   PERM_CHOOSER: <PermChooser />,
   GENERIC_CREATE: <GenericCreate />,
   ROLE_USER_CHOOSER: <UserChooser />, 
-  GENERIC_DELETE: <GenericDeleteModal />
+  GENERIC_DELETE: <GenericDeleteModal />,
+  COURSE_DETAIL: <CourseDetail />,
+  TAKE_COURSE: <TakeCourse />,
+  CREATE_COURSE: <CreateCourse />,
+  SEARCH_TEACHER: <SearchForTeachers />
 };
 
 const style = {

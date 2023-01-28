@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Grid,
   TextField,
@@ -12,54 +13,30 @@ import {
   IconButton,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import axios from "axios";
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { updateStateRole, openModal } from "../../redux/nav";
-import { getRight, getRole } from "../../redux/role";
+import { getCourse, getCurrentHistory } from "../../redux/course";
 import RoleItem from "./roleItem";
 import { TransitionGroup } from "react-transition-group";
 import { useNavigate } from "react-router-dom";
 
-function PermChooser() {
-  const { modalProps } = useSelector((state) => state.nav);
-  const { rights, rightLoading, roles } = useSelector((state) => state.role);
-  
+function TakeCourse() {
   const dispatch = useDispatch();
-  const history = useNavigate()
-
   const [searchBox, setSearchBox] = React.useState("");
-
-  const roleID = useSelector((state) => state.auth.user.role_id);
-  const myRole = React.useMemo(
-    () => roles.find((role) => role.id === roleID),
-    [roles, roleID]
+  const { modalProps } = useSelector((state) => state.nav);
+  const { courses, allLoading, currCoursesLoading, currCourses } = useSelector(
+    (state) => state.course
   );
-  const hasPerm = (tag) => {
-    let found = modalProps.data.premissions.find((perm) => perm.tag === tag);
-    return found ? true : false;
-  };
+
+  const history = useNavigate();
 
   React.useEffect(() => {
-    dispatch(getRight());
+    dispatch(getCourse());
+    dispatch(getCurrentHistory());
 
     return () => {
-      history("/role")
-    }
+      history("/courses");
+    };
   }, [history, dispatch]);
-
-  // const removePermFromList = (id) => {
-  //   let modalClone = structuredClone(modalProps);
-  //   modalClone.premissions = modalClone.premissions.filter(
-  //     (el) => el.id !== id
-  //   );
-  //   dispatch(getRole());
-  //   dispatch(updateStateRole(modalClone));
-  // };
-
-  const handleTextChange = (e) => {
-      setSearchBox(e.target.value);
-  };
 
   return (
     <Grid contariner spacing={2}>
@@ -78,7 +55,7 @@ function PermChooser() {
           label="Enter a Keyword"
           variant="outlined"
           value={searchBox}
-          onChange={handleTextChange}
+          onChange={(e) => setSearchBox(e.target.value)}
           endAdornment={
             <InputAdornment position="end">
               <IconButton edge="end">
@@ -91,25 +68,32 @@ function PermChooser() {
       <Grid item xs={12}>
         <div style={{ marginTop: "1rem" }}>
           <Paper variant="outlined">
-            {rightLoading ? (
+            {allLoading || currCoursesLoading ? (
               <Backdrop style={{ position: "absolute" }} open={true}>
                 <CircularProgress color="inherit" />
               </Backdrop>
             ) : (
               <List sx={{ width: "100%", height: "20rem", overflow: "auto" }}>
                 <TransitionGroup>
-                  {rights.filter(item => !hasPerm(item.tag) && item.tag.includes(searchBox.toUpperCase())).map(({ id, tag, description }, i) => (
-                    <Collapse key={i}>
-                      <RoleItem
-                        key={i}
-                        tag={tag}
-                        desc={description}
-                        roleId={modalProps.roleId}
-                        id={id}
-                        hasRole={hasPerm(tag)}
-                      />
-                    </Collapse>
-                  ))}
+                  {courses
+                    .filter(
+                      (item) =>
+                        item.name
+                          .toUpperCase()
+                          .includes(searchBox.toUpperCase()) &&
+                        !currCourses.some((i) => i.id === item.id)
+                    )
+                    .map(({ id, name, course_id }, i) => (
+                      <Collapse key={i}>
+                        <RoleItem
+                          key={i}
+                          tag={name}
+                          desc={course_id}
+                          roleId={189}
+                          id={id}
+                        />
+                      </Collapse>
+                    ))}
                 </TransitionGroup>
               </List>
             )}
@@ -120,4 +104,4 @@ function PermChooser() {
   );
 }
 
-export default PermChooser;
+export default TakeCourse;

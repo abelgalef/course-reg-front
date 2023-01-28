@@ -10,6 +10,7 @@ import {
   Paper,
   List,
   Collapse,
+  ListItemIcon,
 } from "@mui/material";
 import { TransitionGroup } from "react-transition-group";
 import axios from "axios";
@@ -19,10 +20,11 @@ import { BACKEND_ENDPOINT } from "../../redux/constants";
 import Placeholder from "../modalPlaceholder/roleModalPlaceholder";
 import PaperButton from "../paperButton";
 import { orange, red, green, blue } from "@mui/material/colors";
-import { East, Rule, Add } from "@mui/icons-material";
+import { East, Rule, Add, AutoStories } from "@mui/icons-material";
 import { openModal } from "../../redux/nav";
 import moment from "moment";
 import { DataGrid } from "@mui/x-data-grid";
+import Empty from "../empty";
 
 const cols = [
   { field: "id", headerName: "ID", width: 70 },
@@ -53,19 +55,6 @@ const cols = [
     },
   },
 ];
-
-function Empty() {
-  return (
-    <div style={{ textAlign: "center", transform: "translateY(8rem)" }}>
-      <Typography variant="h5" component="div">
-        There is nothing to display
-        <Typography variant="body2" component="div">
-          Add more courses to see them here
-        </Typography>
-      </Typography>
-    </div>
-  );
-}
 
 function DeptDetail() {
   const { modalProps } = useSelector((state) => state.nav);
@@ -149,7 +138,8 @@ function DeptDetail() {
                         ID: "GENERIC_CREATE",
                         props: {
                           data: {
-                            change: "", this: ""
+                            change: "",
+                            this: "",
                           },
                           header: "Add a new Constraint to this department",
                           caption: "Enter the details of the new constraint",
@@ -178,13 +168,17 @@ function DeptDetail() {
                   onClick={() =>
                     dispatch(
                       openModal({
-                        ID: "GENERIC_UPDATE",
+                        ID: "CREATE_COURSE",
                         props: {
-                          data: dept,
-                          header: "Update this department",
-                          caption: "Update the details of the department",
-                          url: "/dept",
-                          ID: dept.id,
+                          data: {
+                            course_id: "",
+                            credits: 3,
+                            name: "",
+                            dept_id: modalProps.id,
+                          },
+                          header: "Add a new Course for this department",
+                          caption: "Enter the details of the new course",
+                          url: "/course",
                         },
                         conStyle: { width: "30vw" },
                       })
@@ -198,8 +192,8 @@ function DeptDetail() {
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary="Update this department"
-                    secondary="Click here to change the details of this department"
+                    primary="Add a course on this department"
+                    secondary="Click here to add a course on this department"
                   />
                   <East sx={{ m: "auto" }} />
                 </ListItem>
@@ -221,7 +215,25 @@ function DeptDetail() {
 
           <Grid item sx={12}>
             <Paper variant="outlined" style={{ height: "20rem" }}>
-              <Empty />
+              {dept.courses.length === 0 ? (
+                <Empty caption="Add more courses to see them here" />
+              ) : (
+                <List>
+                  {dept.courses.map((item) => (
+                    <ListItem>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <AutoStories />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={item.name}
+                        secondary={item.course_id}
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
             </Paper>
           </Grid>
         </Grid>

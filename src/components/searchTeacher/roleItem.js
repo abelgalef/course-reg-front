@@ -17,9 +17,8 @@ import { openError } from "../../redux/nav";
 function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
   const [hover, setHover] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [processed, setProcessed] = React.useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); 
 
   const { token } = useSelector((state) => state.auth);
 
@@ -32,7 +31,6 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
       })
       .then((res) => {
         setLoading(false);
-        setProcessed(true);
       })
       .catch((err) => {
         if (err.response) {
@@ -71,22 +69,20 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
       alignItems="flex-start"
       disabled={loading}
       secondaryAction={
-        !processed ? (
-          <IconButton
-            edge="end"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            color={hover ? "error" : "default"}
-            onClick={() => handelClick()}
-            disabled={loading}
-          >
-            <Add />
-          </IconButton>
-        ) : undefined
+        <IconButton
+          edge="end"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+          color={hover ? "error" : "default"}
+          onClick={() => handelClick()}
+          disabled={loading}
+        >
+          <Add />
+        </IconButton>
       }
     >
       <ListItemAvatar>
-        <Avatar sx={processed ? { bgcolor: green[500] } : undefined}>
+        <Avatar>
           <Person />
         </Avatar>
         {loading && (

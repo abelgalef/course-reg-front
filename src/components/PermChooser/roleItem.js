@@ -17,6 +17,7 @@ import { openError } from "../../redux/nav";
 function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
   const [hover, setHover] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [processed, setProcessed] = React.useState(false)
 
   const dispatch = useDispatch();
 
@@ -31,6 +32,7 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
       })
       .then((res) => {
         setLoading(false);
+        setProcessed(true)
       })
       .catch((err) => {
         if (err.response) {
@@ -69,7 +71,7 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
       alignItems="flex-start"
       disabled={loading}
       secondaryAction={
-        !hasRole && (
+        !processed && (
           <IconButton
             edge="end"
             onMouseEnter={() => setHover(true)}
@@ -84,8 +86,8 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
       }
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: hasRole ? green[500] : red[300] }}>
-          {hasRole ? <Check /> : <Close />}
+        <Avatar sx={{ bgcolor: processed ? green[500] : red[300] }}>
+          {processed ? <Check /> : <Close />}
         </Avatar>
         {loading && (
           <CircularProgress

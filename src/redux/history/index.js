@@ -1,9 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+let his = []
+
+if (JSON.parse(localStorage.getItem("history")) !== null) {
+  his = JSON.parse(localStorage.getItem("history")).history
+}
+
 export const historySlice = createSlice({
   name: "history",
   initialState: {
-    history: JSON.parse(localStorage.getItem("history")).history || [],
+    history: his,
   },
   reducers: {
     addHistory: (state, action) => {

@@ -23,6 +23,8 @@ import { getRole } from "../../redux/role";
 import { TransitionGroup } from "react-transition-group";
 import { BACKEND_ENDPOINT } from "../../redux/constants";
 import RolePlaceholder from "./roleModalPlaceholder";
+import axios from "axios";
+import Placeholder from "../modalPlaceholder/roleModalPlaceholder";
 
 const cols = [
   { field: "id", headerName: "ID", width: 70 },
@@ -35,10 +37,29 @@ const cols = [
 
 function RoleModalChild() {
   const modalProps = useSelector((state) => state.nav.modalProps);
+  const { token } = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
   console.log(modalProps);
 
   // TODO: SEND THE REQUEST FOR THE ROLE DETAILS FROM HERE SO THAT THE MODAL HYDRATES WHEN THE MODAL OPENS
+
+  const [role, setRole] = React.useState(modalProps);
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+
+    axios
+      .get(`${BACKEND_ENDPOINT}/role/${modalProps.id}`, {
+        headers: { Authorization: "Token " + token },
+      })
+      .then((res) => {
+        setRole(res.data);
+        setIsLoading(false);
+      })
+      .catch((err) => setIsLoading(false));
+  }, [modalProps, token]);
 
   const removePermFromList = (id) => {
     let modalClone = structuredClone(modalProps);
@@ -48,7 +69,9 @@ function RoleModalChild() {
     dispatch(getRole());
     dispatch(updateStateRole(modalClone));
   };
-  // return <RolePlaceholder /> IF THE ROLE IS LOADING USE THIS
+
+  if (isLoading) return <Placeholder />;
+
   return (
     <Box>
       <Grid container spaceing={2}>
@@ -124,10 +147,7 @@ function RoleModalChild() {
                         openModal({
                           ID: "PERM_CHOOSER",
                           props: {
-                            data: {
-                              tag: modalProps.tag,
-                              description: modalProps.description,
-                            },
+                            data: modalProps,
                             header: "Give a permission to a role",
                             caption: "Enter a keyword in the search bar.",
                             roleId: modalProps.id,
@@ -180,9 +200,7 @@ function RoleModalChild() {
         <Grid item xs={12}>
           <DataGrid
             columns={cols}
-            rows={[
-              ...modalProps.users
-            ]}
+            rows={[...modalProps.users]}
             pageSize={5}
             rowsPerPageOptions={[5]}
             autoHeight

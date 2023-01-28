@@ -7,7 +7,7 @@ import {
   Avatar,
   CircularProgress,
 } from "@mui/material";
-import { Add, Check, Close, Person } from "@mui/icons-material";
+import { Add, AutoStories, Close } from "@mui/icons-material";
 import { green, orange, red } from "@mui/material/colors";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
@@ -17,7 +17,6 @@ import { openError } from "../../redux/nav";
 function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
   const [hover, setHover] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [processed, setProcessed] = React.useState(false);
 
   const dispatch = useDispatch();
 
@@ -27,20 +26,20 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
     setLoading(true);
 
     axios
-      .put(`${BACKEND_ENDPOINT}/role/add-users/${roleId}/${id}`, {
+      .post(`${BACKEND_ENDPOINT}/course/take-course/${id}`, {
         headers: { Authorization: `Token ${token}` },
       })
       .then((res) => {
         setLoading(false);
-        setProcessed(true);
       })
       .catch((err) => {
         if (err.response) {
+          console.log("err", err.response.data.error);
           dispatch(
             openError({
               type: "error",
               header: "Something Went Wrong",
-              desc: err.data,
+              desc: err.response.data.error,
             })
           );
         } else if (err.request) {
@@ -71,7 +70,7 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
       alignItems="flex-start"
       disabled={loading}
       secondaryAction={
-        !processed ? (
+        !hasRole && (
           <IconButton
             edge="end"
             onMouseEnter={() => setHover(true)}
@@ -82,12 +81,12 @@ function RoleItem({ hasRole, tag, desc, id, roleId, handelEdgeClick }) {
           >
             <Add />
           </IconButton>
-        ) : undefined
+        )
       }
     >
       <ListItemAvatar>
-        <Avatar sx={processed ? { bgcolor: green[500] } : undefined}>
-          <Person />
+        <Avatar style={{ background: green[500] }}>
+          <AutoStories />
         </Avatar>
         {loading && (
           <CircularProgress

@@ -3,10 +3,13 @@ import { AppBar, Toolbar, IconButton } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleDrawer } from "../../redux/nav"
 import {Menu} from "@mui/icons-material"
+import { useLocation } from "react-router-dom";
+
 const drawerWidth = "22rem";
 
 function LoggedInAppBar() {
   const dispatch = useDispatch()
+  const location = useLocation()
   return (
     <AppBar
       position="fixed"
@@ -26,7 +29,7 @@ function LoggedInAppBar() {
         >
           <Menu />
         </IconButton>
-        <h4>Admin</h4>
+        <h3>{ location.pathname.charAt(1).toUpperCase() + location.pathname.slice(2) }</h3>
       </Toolbar>
     </AppBar>
   );

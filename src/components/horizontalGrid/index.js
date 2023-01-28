@@ -20,7 +20,6 @@ function HorizontalGrid({ children }) {
         display: "inline-block",
         whiteSpace: "nowrap",
         overflowX: "scroll",
-        height: "11rem",
         textAlign: "center"
       }}
       xs={12}
